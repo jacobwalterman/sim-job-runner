@@ -10,6 +10,7 @@ def run_job(job_id):
         job = session.get(Job, job_id)
         if job is None:
             return
+        job.status = "running"
         try:
             fn = SIMULATIONS[job.simulation]
             result = fn(**job.params)
