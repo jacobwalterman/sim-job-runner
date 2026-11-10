@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from db import Job, SessionLocal
-from simulations import SIMULATIONS
-from tasks import run_job
+from .db import Job, SessionLocal
+from .simulations import SIMULATIONS
+from .tasks import run_job
 
 class JobCreate(BaseModel):
     simulation: str

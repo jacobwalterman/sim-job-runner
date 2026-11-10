@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simulation-job-runner"
+version = "0.1.0"
+description = "HTTP service for running simulations asynchronously with FastAPI, Celery, Redis and Postgres."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Jacob Walterman" }]
+dependencies = [
+    "fastapi[standard]>=0.162",
+    "pydantic>=2.14",
+    "celery[redis]>=5.6",
+    "SQLAlchemy>=2.1",
+    "psycopg[binary]>=3.3",
+    "tlw @ git+https://github.com/jacobwalterman/transmission-line-waves.git@main",
+]
+
+[project.optional-dependencies]
+dev = [
+    "celery-types>=0.26",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

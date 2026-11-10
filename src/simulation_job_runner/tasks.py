@@ -1,6 +1,6 @@
 from celery import Celery
-from db import Job, SessionLocal
-from simulations import SIMULATIONS
+from .db import Job, SessionLocal
+from .simulations import SIMULATIONS
 
 celery_app = Celery("simjobs", broker="redis://localhost:6379/0")
 

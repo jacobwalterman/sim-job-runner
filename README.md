@@ -12,7 +12,9 @@ client ──POST /jobs──▶ FastAPI ──insert (queued)──▶ Postgres
 client ◀─GET /jobs/{id}─ FastAPI ◀──── status/result ── Postgres ◀┘
 ```
 
-| File | Purpose |
+All code lives in the `simulation_job_runner` package under `src/`.
+
+| Module | Purpose |
 | --- | --- |
 | `main.py` | FastAPI app: `/health`, `POST /jobs`, `GET /jobs/{id}` |
 | `tasks.py` | Celery app (Redis broker) and the `run_job` task |
@@ -39,7 +41,7 @@ A job's `status` is one of:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
 Start Postgres and Redis. For example, with Docker:
@@ -54,10 +56,10 @@ docker run -d --name simjobs-redis -p 6379:6379 redis
 
 Connection settings are currently hardcoded:
 
-- Postgres: `postgresql+psycopg://postgres:dev@localhost:5432/simjobs` (`db.py`)
-- Redis broker: `redis://localhost:6379/0` (`tasks.py`)
+- Postgres: `postgresql+psycopg://postgres:dev@localhost:5432/simjobs` (`src/simulation_job_runner/db.py`)
+- Redis broker: `redis://localhost:6379/0` (`src/simulation_job_runner/tasks.py`)
 
-The `jobs` table is created automatically on import of `db.py`; there are no migrations.
+The `jobs` table is created automatically when `simulation_job_runner.db` is imported; there are no migrations.
 
 ## Running
 
@@ -65,10 +67,10 @@ Start the API and a worker in separate terminals (with the venv active):
 
 ```bash
 # API server
-uvicorn main:app --reload
+uvicorn simulation_job_runner.main:app --reload
 
 # Celery worker
-celery -A tasks.celery_app worker --loglevel=info
+celery -A simulation_job_runner.tasks.celery_app worker --loglevel=info
 ```
 
 The API is served at http://localhost:8000, with interactive docs at http://localhost:8000/docs.
@@ -115,7 +117,7 @@ curl localhost:8000/jobs/1
 
 ## Simulations
 
-Registered in `SIMULATIONS` in `simulations.py`. `params` are passed to the function as keyword arguments.
+Registered in `SIMULATIONS` in `src/simulation_job_runner/simulations.py`. `params` are passed to the function as keyword arguments.
 
 | Name | Params | Result | Status |
 | --- | --- | --- | --- |
@@ -124,7 +126,7 @@ Registered in `SIMULATIONS` in `simulations.py`. `params` are passed to the func
 
 ### Adding a simulation
 
-1. Write a function in `simulations.py` that takes keyword arguments and returns a JSON-serializable `dict`.
+1. Write a function in `src/simulation_job_runner/simulations.py` that takes keyword arguments and returns a JSON-serializable `dict`.
 2. Add it to the `SIMULATIONS` dict under the name clients will use.
 
 Exceptions raised by the function are caught by the worker and recorded on the job as `failed`.
