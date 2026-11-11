@@ -122,7 +122,19 @@ Registered in `SIMULATIONS` in `src/simulation_job_runner/simulations.py`. `para
 | Name | Params | Result | Status |
 | --- | --- | --- | --- |
 | `heat` | `steps: int`, `alpha: float` | `{"final_temp": float}` | Placeholder implementation |
-| `transmission-line` | `decay_rate: float` | `{"decay_rate": float}` | Placeholder implementation (echoes the input) |
+| `transmission-line` | `n: list[int]`, `l: list[float]`, `c: list[float]`, `k: list[float]` | `{"decay_rate": float}` | Calls `tlw.get_decay_rate_raw` |
+
+For `transmission-line`, the four lists hold one value per segment (for example `n = [n1, n2, n3, n4]`): `n` holds integer values, `l` is the position of the wave end point, `c` is the wave speed and `k` is the gain. For example:
+
+```bash
+curl -X POST localhost:8000/jobs \
+  -H 'Content-Type: application/json' \
+  -d '{"simulation": "transmission-line", "params": {
+        "n": [15, 20, 25, 15],
+        "l": [1.0, 3.0, 7.0, 7.5],
+        "c": [7.0, 4.0, 3.0, 4.0],
+        "k": [1.0, 2.0, 3.0, 4.0]}}'
+```
 
 ### Adding a simulation
 

@@ -15,7 +15,7 @@ dependencies = [
     "celery[redis]>=5.6",
     "SQLAlchemy>=2.1",
     "psycopg[binary]>=3.3",
-    "tlw @ git+https://github.com/jacobwalterman/transmission-line-waves.git@main",
+    "transmission-line-waves @ git+https://github.com/jacobwalterman/transmission-line-waves.git@main",
 ]
 
 [project.optional-dependencies]
